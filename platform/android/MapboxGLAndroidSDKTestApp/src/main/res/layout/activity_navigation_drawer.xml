@@ -23,12 +23,10 @@
 
     </RelativeLayout>
 
-    <fragment
+    <FrameLayout
         android:id="@+id/navigation_drawer"
-        android:name="com.mapbox.mapboxsdk.testapp.activity.maplayout.NavigationDrawerFragment"
-        android:layout_width="@dimen/navigation_drawer_width"
-        android:layout_height="match_parent"
         android:layout_gravity="start"
-        tools:layout="@layout/drawer_navigation_drawer" />
+        android:layout_width="@dimen/navigation_drawer_width"
+        android:layout_height="match_parent"/>
 
 </android.support.v4.widget.DrawerLayout>
