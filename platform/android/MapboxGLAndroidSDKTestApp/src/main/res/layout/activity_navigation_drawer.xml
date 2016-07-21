@@ -6,15 +6,23 @@
     android:layout_height="match_parent"
     tools:context="com.mapbox.mapboxsdk.testapp.activity.maplayout.NavigationDrawerActivity">
 
-    <!-- As the main content view, the view below consumes the entire
-         space available using match_parent in both dimensions. -->
-    <FrameLayout
-        android:id="@+id/container"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
 
-    <!-- The drawer is given a fixed width in dp and extends the full height of
-         the container. -->
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="56dp" />
+
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/toolbar" />
+
+    </RelativeLayout>
+
     <fragment
         android:id="@+id/navigation_drawer"
         android:name="com.mapbox.mapboxsdk.testapp.activity.maplayout.NavigationDrawerFragment"
