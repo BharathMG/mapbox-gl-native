@@ -367,6 +367,34 @@ test-node: node
 	npm test
 	npm run test-suite
 
+#### Android targets ###########################################################
+
+ANDROID_ENV = platform/android/scripts/toolchain.sh
+ANDROID_ABIS = arm-v5 arm-v7 arm-v8 x86 x86-64 mips
+
+define ANDROID_RULES
+
+build/android-$1/Makefile: platform/android/config.cmake
+	mkdir -p build/android-$1
+	($$(shell $(ANDROID_ENV) $1) cd build/android-$1 && cmake ../.. \
+		-DCMAKE_TOOLCHAIN_FILE=../../platform/android/toolchain.cmake \
+		-DCMAKE_BUILD_TYPE=$(BUILDTYPE) \
+		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+		-DMBGL_PLATFORM=android)
+
+android-lib-$1: build/android-$1/Makefile
+	$$(shell $(ANDROID_ENV) $1) $(MAKE) -j$(JOBS) -C build/android-$1 all
+
+android-$1: android-lib-$1
+	cd platform/android && ./gradlew --parallel --max-workers=$(JOBS) assemble$(BUILDTYPE)
+
+apackage: android-lib-$1
+endef
+
+$(foreach abi,$(ANDROID_ABIS),$(eval $(call ANDROID_RULES,$(abi))))
+
+android: android-arm-v7
+
 #### Miscellaneous targets #####################################################
 
 style-code:
