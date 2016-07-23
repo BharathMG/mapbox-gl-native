@@ -374,21 +374,22 @@ ANDROID_ABIS = arm-v5 arm-v7 arm-v8 x86 x86-64 mips
 
 define ANDROID_RULES
 
-build/android-$1:
-	mkdir -p build/android-$1
+build/android-$1/$(BUILDTYPE):
+	mkdir -p build/android-$1/$(BUILDTYPE)
 
-build/android-$1/toolchain.cmake: platform/android/scripts/toolchain.sh build/android-$1
-	$(ANDROID_ENV) $1 > build/android-$1/toolchain.cmake
+build/android-$1/$(BUILDTYPE)/toolchain.cmake: platform/android/scripts/toolchain.sh build/android-$1/$(BUILDTYPE)
+	$(ANDROID_ENV) $1 > build/android-$1/$(BUILDTYPE)/toolchain.cmake
 
-build/android-$1/Makefile: build/android-$1/toolchain.cmake platform/android/config.cmake
-	cd build/android-$1 && cmake ../.. \
-		-DCMAKE_TOOLCHAIN_FILE=build/android-$1/toolchain.cmake \
+build/android-$1/$(BUILDTYPE)/Makefile: build/android-$1/$(BUILDTYPE)/toolchain.cmake platform/android/config.cmake
+	cd build/android-$1/$(BUILDTYPE) && cmake ../../.. \
+		-DCMAKE_TOOLCHAIN_FILE=build/android-$1/$(BUILDTYPE)/toolchain.cmake \
 		-DCMAKE_BUILD_TYPE=$(BUILDTYPE) \
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+		-DCMAKE_VERBOSE_MAKEFILE=ON \
 		-DMBGL_PLATFORM=android
 
-android-lib-$1: build/android-$1/Makefile
-	$(MAKE) -j$(JOBS) -C build/android-$1 all
+android-lib-$1: build/android-$1/$(BUILDTYPE)/Makefile
+	$(MAKE) VERBOSE=1 -j$(JOBS) -C build/android-$1/$(BUILDTYPE) mapbox-gl
 
 android-$1: android-lib-$1
 	cd platform/android && ./gradlew --parallel --max-workers=$(JOBS) assemble$(BUILDTYPE)

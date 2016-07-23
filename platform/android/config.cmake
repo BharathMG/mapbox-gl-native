@@ -34,8 +34,6 @@ macro(mbgl_platform_core)
 
         # Misc
         PRIVATE platform/android/src/native_map_view.cpp
-        PRIVATE platform/android/src/jni.cpp
-        PRIVATE platform/android/src/attach_env.cpp
         PRIVATE platform/android/src/log_android.cpp
         PRIVATE platform/default/string_stdlib.cpp
 
@@ -62,11 +60,21 @@ macro(mbgl_platform_core)
     target_add_mason_package(mbgl-core PUBLIC jni.hpp)
 
     target_link_libraries(mbgl-core
-        PRIVATE -llog
-        PRIVATE -landroid
-        PRIVATE -lEGL
-        PRIVATE -lGLESv2
-        PRIVATE -lstdc++
-        PRIVATE -latomic
+        PUBLIC -llog
+        PUBLIC -landroid
+        PUBLIC -lEGL
+        PUBLIC -lGLESv2
+        PUBLIC -lstdc++
+        PUBLIC -latomic
     )
 endmacro()
+
+
+add_library(mapbox-gl SHARED
+    platform/android/src/jni.cpp
+    platform/android/src/attach_env.cpp
+)
+
+target_link_libraries(mapbox-gl
+    PUBLIC mbgl-core
+)
