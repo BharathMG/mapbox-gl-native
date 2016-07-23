@@ -1,3 +1,6 @@
+#Include to use build specific variables
+include(${CMAKE_CURRENT_BINARY_DIR}/toolchain.cmake)
+
 mason_use(geojson 0.1.4)
 mason_use(jni.hpp 2.0.0)
 mason_use(libjpeg-turbo 1.4.2)
@@ -69,7 +72,6 @@ macro(mbgl_platform_core)
     )
 endmacro()
 
-
 add_library(mapbox-gl SHARED
     platform/android/src/jni.cpp
     platform/android/src/attach_env.cpp
@@ -77,4 +79,28 @@ add_library(mapbox-gl SHARED
 
 target_link_libraries(mapbox-gl
     PUBLIC mbgl-core
+)
+
+add_library(example-custom-layer SHARED
+    platform/android/src/example_custom_layer.cpp
+)
+
+target_link_libraries(example-custom-layer
+    PRIVATE mbgl-core
+)
+
+set(ANDROID_TARGET_DIR ${CMAKE_CURRENT_SOURCE_DIR}/platform/android/MapboxGLAndroidSDK/src/main/jniLibs/${ANDROID_JNIDIR}/)
+
+add_custom_target(copy-binaries
+    DEPENDS mapbox-gl
+    DEPENDS example-custom-layer
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${ANDROID_TARGET_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:mapbox-gl> ${ANDROID_TARGET_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:example-custom-layer> ${ANDROID_TARGET_DIR}
+)
+
+add_custom_target(_all ALL
+    DEPENDS mapbox-gl
+    DEPENDS example-custom-layer
+    DEPENDS copy-binaries
 )

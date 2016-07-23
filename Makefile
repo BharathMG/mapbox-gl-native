@@ -385,11 +385,10 @@ build/android-$1/$(BUILDTYPE)/Makefile: build/android-$1/$(BUILDTYPE)/toolchain.
 		-DCMAKE_TOOLCHAIN_FILE=build/android-$1/$(BUILDTYPE)/toolchain.cmake \
 		-DCMAKE_BUILD_TYPE=$(BUILDTYPE) \
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-		-DCMAKE_VERBOSE_MAKEFILE=ON \
 		-DMBGL_PLATFORM=android
 
 android-lib-$1: build/android-$1/$(BUILDTYPE)/Makefile
-	$(MAKE) VERBOSE=1 -j$(JOBS) -C build/android-$1/$(BUILDTYPE) mapbox-gl
+	$(MAKE) -j$(JOBS) -C build/android-$1/$(BUILDTYPE) all
 
 android-$1: android-lib-$1
 	cd platform/android && ./gradlew --parallel --max-workers=$(JOBS) assemble$(BUILDTYPE)
@@ -400,6 +399,12 @@ endef
 $(foreach abi,$(ANDROID_ABIS),$(eval $(call ANDROID_RULES,$(abi))))
 
 android: android-arm-v7
+
+test-android:
+	cd platform/android && ./gradlew testReleaseUnitTest --continue
+
+apackage:
+	cd platform/android && ./gradlew --parallel-threads=$(JOBS) assemble$(BUILDTYPE)
 
 #### Miscellaneous targets #####################################################
 
