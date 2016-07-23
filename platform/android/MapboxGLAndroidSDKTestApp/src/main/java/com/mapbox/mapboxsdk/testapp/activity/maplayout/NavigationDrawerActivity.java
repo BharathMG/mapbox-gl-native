@@ -6,10 +6,8 @@ import android.app.FragmentManager;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -180,11 +178,8 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         public void setUp(Activity activity, int fragmentId, DrawerLayout drawerLayout, ActionBar actionBar) {
             mFragmentContainerView = activity.findViewById(fragmentId);
             mDrawerLayout = drawerLayout;
-            if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-                mDrawerLayout.setScrimColor(Color.TRANSPARENT);
-            } else {
-                mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-            }
+            mDrawerLayout.setScrimColor(Color.TRANSPARENT);
+
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
 
